@@ -2,11 +2,14 @@ const http = require('http');
 const PORT = process.env.PORT || 8080;
 const URL  = process.env.URL  || 'http://www.actionherojs.com';
 
-function handleRequest(request, response){
-  response.statusCode = 302;
-  response.setHeader("Location", URL);
-  response.end(`You are being redirected to ${URL}\r\n`);
-  logRequest(request);
+function handleRequest(request, response) {
+  let protocol = request.headers['x-forwarded-proto']
+  let hostname = request.headers.host.replace('www.', '')
+  let url = `${protocol}://${hostname}${request.url}`
+
+  response.statusCode = 302
+  response.setHeader('Location', url)
+  response.end(`You are being redirected to ${url}\r\n`)
 }
 
 function logRequest(request){
